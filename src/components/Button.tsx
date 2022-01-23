@@ -7,6 +7,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
 
 export function Button(props: ButtonProps){
     return(
+        //...props passa as propriedades
         <button className="button" {...props} />
 
     );
