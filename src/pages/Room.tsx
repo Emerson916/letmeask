@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import iconPeople from "../assets/images/icon.svg";
 import { useParams } from "react-router-dom";
 import logoImg from "../assets/images/logo.svg";
@@ -8,38 +8,73 @@ import { useAuth } from "../hooks/useAuth";
 import { database } from "../services/firebase";
 import '../styles/room.scss';
 
+type FirebaseQuestions = Record<string, {
+    author: {
+        name: string;
+        avatar: string;
+    }
+
+    content: string;
+    isAnswered: boolean;
+    isHighLighted: boolean;
+
+}>
+
 type RoomParams = {
     id: string;
 }
 
 export function Room() {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const params = useParams<RoomParams>();
     const [newQuestion, setNewQuestion] = useState('');
     const roomId = params.id!;
 
-    async function handleSendQuestion(event: FormEvent){
+
+    useEffect(() => {
+        const roomRef = database.ref(`rooms/${roomId}`);
+
+        //firebase once - escuta o evento apenas uma vez  
+        //on - escuta o evento mais de uma vez
+        roomRef.once('value', room => {
+            const databaseRoom = room.val()
+            const firebaseQuestions: FirebaseQuestions = databaseRoom.questions
+
+            //Object.entries() - Transforma um array em uma Matriz
+            const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
+                return {
+                    id: key,
+                    content: value.content,
+                    author: value.author,
+                    isHighLighted: value.isHighLighted,
+                    isAnswered: value.isAnswered,
+                }
+            })
+        })
+    }, [roomId]);
+
+    async function handleSendQuestion(event: FormEvent) {
         event.preventDefault()
 
-        if(newQuestion.trim() === ''){
+        if (newQuestion.trim() === '') {
             return
         }
 
-        if(!user){
+        if (!user) {
             throw new Error("You must be logged in");
         }
 
         const question = {
             content: newQuestion,
-            author :{
+            author: {
                 name: user.name,
-                avatar : user.avatar,
+                avatar: user.avatar,
             },
 
             //isHighLighted - vê se a pergunta esta sendo respondida
-            isHighLighted : false,
+            isHighLighted: false,
             //isAnswered - verifica se a pergunta ja foi respondida
-            isAnswered : false
+            isAnswered: false
         };
 
         //criando o campo de questions no database
@@ -52,8 +87,8 @@ export function Room() {
         <div id="page-room">
             <header>
                 <div className="content">
-                    <img src={logoImg} alt="Letmeask"/>
-                    <RoomCode code={roomId}/>
+                    <img src={logoImg} alt="Letmeask" />
+                    <RoomCode code={roomId} />
                 </div>
             </header>
 
@@ -71,9 +106,9 @@ export function Room() {
                     />
 
                     <div className="form-footer">
-                        { user ? (
+                        {user ? (
                             <div className="user-info">
-                                <img src={iconPeople} alt={user.name}/>
+                                <img src={iconPeople} alt={user.name} />
                                 {/* <img src={user.avatar} alt={user.name}/> */}
                                 <span>{user.name}</span>
                             </div>
