@@ -1,7 +1,7 @@
 import illustration from "../assets/images/illustration.svg";
 import LogoImg from "../assets/images/logo.svg";
 import { Button } from "../components/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.scss";
 import { FormEvent, useState } from "react";
 import { database } from "../services/firebase";
@@ -9,7 +9,8 @@ import { useAuth } from "../hooks/useAuth";
 
 
 export function NewRoom() {
-    const {user} = useAuth()
+    const {user} = useAuth();
+    const navigate = useNavigate();
     const [newRoom, setNewRoom] = useState('');
 
     async function handleCreateRoom(event: FormEvent){
@@ -28,6 +29,9 @@ export function NewRoom() {
             title: newRoom,
             authorId: user?.id,
         })
+
+        //Redirecionando para a sala criada
+        navigate(`/rooms/${firebaseRoom.key}`)
 
     }
 
