@@ -32,9 +32,7 @@ export function NewRoom() {
 
         //Redirecionando para a sala criada
         navigate(`/rooms/${firebaseRoom.key}`)
-
     }
-
 
     return (
         <div id="page-auth">
