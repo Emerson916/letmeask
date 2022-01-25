@@ -17,7 +17,7 @@ export function NewRoom() {
         //para previnir o evento padrão de atualizar a tela ao clicar no button Submit
         event.preventDefault()
 
-        if(newRoom.trim() == ''){
+        if(newRoom.trim() === ''){
             return;
         }
 
