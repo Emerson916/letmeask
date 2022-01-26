@@ -7,7 +7,7 @@ import { RoomCode } from "../components/RoomCode";
 import { useAuth } from "../hooks/useAuth";
 import { database } from "../services/firebase";
 import '../styles/room.scss';
-import { type } from "os";
+
 
 type FirebaseQuestions = Record<string, {
     author: {
@@ -42,7 +42,7 @@ export function Room() {
     const { user } = useAuth();
     const params = useParams<RoomParams>();
     const [newQuestion, setNewQuestion] = useState('');
-    const [question, setQuestion] = useState<Question[]>([]);
+    const [questions, setQuestion] = useState<Question[]>([]);
     const [title, setTitle] = useState('');
     const roomId = params.id!;
 
@@ -54,7 +54,7 @@ export function Room() {
         //on - escuta o evento mais de uma vez
         roomRef.on('value', room => {
             const databaseRoom = room.val()
-            const firebaseQuestions: FirebaseQuestions = databaseRoom.questions
+            const firebaseQuestions: FirebaseQuestions = databaseRoom.questions ?? {}
 
             //Object.entries() - Transforma um array em uma Matriz
             const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
@@ -67,8 +67,8 @@ export function Room() {
                 }
             })
 
-            setTitle(databaseRoom.title)
-            setQuestion(parsedQuestions)
+            setTitle(databaseRoom.title);
+            setQuestion(parsedQuestions);
         })
     }, [roomId]);
 
@@ -83,7 +83,7 @@ export function Room() {
             throw new Error("You must be logged in");
         }
 
-        const question = {
+        const questions = {
             content: newQuestion,
             author: {
                 name: user.name,
@@ -97,7 +97,7 @@ export function Room() {
         };
 
         //criando o campo de questions no database
-        await database.ref(`rooms/${roomId}/question`).push(question);
+        await database.ref(`rooms/${roomId}/questions`).push(questions);
 
         setNewQuestion('');
     }
@@ -111,11 +111,11 @@ export function Room() {
                 </div>
             </header>
 
-            <main className="content">
+            <main >
                 <div className="room-title">
                     <h1>Sala {title}</h1>
                     {/* if sem o else */}
-                    {question.length > 0 && <span>{question.length} perguntas</span>}
+                    {questions.length > 0 && <span>{questions.length} perguntas</span>}
 
                 </div>
 
@@ -139,6 +139,7 @@ export function Room() {
                         <Button type="submit" disabled={!user}>Enviar pergunta</Button>
                     </div>
                 </form>
+
             </main>
         </div>
     );
