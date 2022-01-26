@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import iconPeople from "../assets/images/icon.svg";
+import deleteImg from "../assets/images/delete.svg";
 import { useParams } from "react-router-dom";
 import logoImg from "../assets/images/logo.svg";
 import { Button } from "../components/Button";
@@ -22,6 +22,12 @@ export function AdminRoom() {
     const roomId = params.id!;
 
     const { title, questions } = useRoom(roomId)
+
+    async function handleDeleteQuestion(questionId : string) {
+      if (window.confirm("Tem certeza que você deseja excluir esta pergunta ?")) {
+          await database.ref(`rooms/${roomId}/questions/${questionId}`).remove();
+      }
+    } 
 
     async function handleSendQuestion(event: FormEvent) {
         event.preventDefault()
@@ -82,7 +88,14 @@ export function AdminRoom() {
                                 key={questions.id}
                                 author={questions.author}
                                 content={questions.content}
-                            />
+                            >
+                                <button 
+                                    type="button"
+                                    onClick={() => handleDeleteQuestion(questions.id)}
+                                    >
+                                    <img src={deleteImg} alt="Remover pergunta"/>
+                                </button>
+                            </Question>
                         );
                     })}
                 </div>
