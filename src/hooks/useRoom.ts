@@ -10,20 +10,24 @@ type FirebaseQuestions = Record<string, {
     content: string;
     isAnswered: boolean;
     isHighLighted: boolean;
+    //string - objeto, string - valor
+    likes: Record<string, {
+        authorId: string;
+    }>
 
 }>
 
-type QuestionType = {
-    id: string;
-    author: {
-        name: string;
-        avatar: string;
-    }
+    type QuestionType = {
+        id: string;
+        author: {
+            name: string;
+            avatar: string;
+        }
 
     content: string;
-    isAnswered: boolean;
-    isHighLighted: boolean;
-}
+        isAnswered: boolean;
+        isHighLighted: boolean;
+    }
 
 
 export function useRoom(roomId: string) {
@@ -57,5 +61,5 @@ export function useRoom(roomId: string) {
     }, [roomId]);
 
 
-    return {questions, title}
+    return { questions, title }
 }

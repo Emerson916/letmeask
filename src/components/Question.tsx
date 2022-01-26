@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import '../styles/question.scss';
 
 
@@ -6,11 +7,12 @@ type QuestionProps = {
     author : {
         name: string,
         avatar: string,
-    }
+    };
+    children?: ReactNode;
 }
 
 //fazendo uma dessestruturação na props -- para pegar somente alguns dados
-export function Question({content, author}: QuestionProps){
+export function Question({content, author, children}: QuestionProps){
     return(
         <div className="question">
             <footer>
@@ -19,7 +21,7 @@ export function Question({content, author}: QuestionProps){
                     <span>{author.name}</span>
                 </div>
                 <div>
-
+                    {children}
                 </div>
             </footer>
             <p>{content}</p>
