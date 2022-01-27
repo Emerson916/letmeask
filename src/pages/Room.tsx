@@ -23,8 +23,6 @@ export function Room() {
 
     const { title, questions } = useRoom(roomId)
 
-
-
     async function handleLikeQuestion(questionId:string, likeId : string|undefined) {
        if(likeId){
             await database.ref(`rooms/${roomId}/questions/${questionId}/likes/${likeId}`).remove()
@@ -93,7 +91,7 @@ export function Room() {
                     <div className="form-footer">
                         {user ? (
                             <div className="user-info">
-                                <img src={iconPeople} alt={user.name} />
+                                <img src={user.avatar} alt={user.name} />
                                 {/* <img src={user.avatar} alt={user.name}/> */}
                                 <span>{user.name}</span>
                             </div>

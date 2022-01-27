@@ -1,10 +1,8 @@
-import { FormEvent, useState } from "react";
 import deleteImg from "../assets/images/delete.svg";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import logoImg from "../assets/images/logo.svg";
 import { Button } from "../components/Button";
 import { RoomCode } from "../components/RoomCode";
-import { useAuth } from "../hooks/useAuth";
 import { database } from "../services/firebase";
 import '../styles/room.scss';
 
@@ -16,48 +14,28 @@ type RoomParams = {
 }
 
 export function AdminRoom() {
-    const { user } = useAuth();
+    const navigate = useNavigate()
     const params = useParams<RoomParams>();
-    const [newQuestion, setNewQuestion] = useState('');
+    
     const roomId = params.id!;
 
     const { title, questions } = useRoom(roomId)
+
+    //função para encerrar uma sala
+    async function handleEndRoom() {
+        // uptade() -- vai alterar os dados da sala
+        await database.ref(`rooms/${roomId}`).update({
+            endedAt: new Date(),
+        })
+
+        navigate('/');
+    }
 
     async function handleDeleteQuestion(questionId : string) {
       if (window.confirm("Tem certeza que você deseja excluir esta pergunta ?")) {
           await database.ref(`rooms/${roomId}/questions/${questionId}`).remove();
       }
     } 
-
-    async function handleSendQuestion(event: FormEvent) {
-        event.preventDefault()
-
-        if (newQuestion.trim() === '') {
-            return
-        }
-
-        if (!user) {
-            throw new Error("You must be logged in");
-        }
-
-        const questions = {
-            content: newQuestion,
-            author: {
-                name: user.name,
-                avatar: user.avatar,
-            },
-
-            //isHighLighted - vê se a pergunta esta sendo respondida
-            isHighLighted: false,
-            //isAnswered - verifica se a pergunta ja foi respondida
-            isAnswered: false
-        };
-
-        //criando o campo de questions no database
-        await database.ref(`rooms/${roomId}/questions`).push(questions);
-
-        setNewQuestion('');
-    }
 
     return (
         <div id="page-room">
@@ -66,14 +44,14 @@ export function AdminRoom() {
                     <img src={logoImg} alt="Letmeask" />
                     <div>
                         <RoomCode code={roomId} />
-                        <Button isOutlined>Encerrar sala</Button>
+                        <Button isOutlined onClick={handleEndRoom}>Encerrar sala</Button>
                     </div>
                 </div>
             </header>
 
             <main >
                 <div className="room-title">
-                    <h1>Sala {title}</h1>
+                    <h1>{title}</h1>
                     {/* if sem o else */}
                     {questions.length > 0 && <span>{questions.length} perguntas</span>}
 
