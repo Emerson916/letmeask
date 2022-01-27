@@ -26,7 +26,7 @@ export function Home() {
     async function handleJoinRoom(event: FormEvent) {
         event.preventDefault()
 
-        if(roomCode.trim() === '') {
+        if (roomCode.trim() === '') {
             return
         }
 
@@ -35,8 +35,13 @@ export function Home() {
 
         //verificando se a sala existe
         if (!roomRef.exists()) {
-            alert('Room does not exists.')
-            return
+            alert('Essa sala não existe!.')
+            return;
+        }
+
+        if(roomRef.val().endedAt){
+            alert('Essa sala foi excluida!.')
+            return;
         }
 
         navegate(`/rooms/${roomCode}`);
