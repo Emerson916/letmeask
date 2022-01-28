@@ -75,7 +75,7 @@ export function Room() {
 
             <main >
                 <div className="room-title">
-                    <h1>Sala {title}</h1>
+                    <h1> {title}</h1>
                     {/* if sem o else */}
                     {questions.length > 0 && <span>{questions.length} perguntas</span>}
 
