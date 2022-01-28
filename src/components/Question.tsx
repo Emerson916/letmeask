@@ -23,8 +23,11 @@ export function Question({
 
 }: QuestionProps){
     return(
-        <div className={`question ${isAnswered ? 'answered' : ''} ${isHighLighted && !isAnswered ? 'highLighted' : ''}`}>
-            {/* <p>{content}</p> */}
+        <div className={`question
+         ${isAnswered ? 'answered' : ''} 
+         ${isHighLighted && !isAnswered  ? 'highLighted' : ''}`}
+         >
+            
             <footer>
                 <div className="user-info">
                     <img src={author.avatar} alt={author.name}/>

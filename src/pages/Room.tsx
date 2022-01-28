@@ -113,7 +113,8 @@ export function Room() {
                                 isAnswered={questions.isAnswered}
                                 isHighLighted={questions.isHighLighted}  
                             >
-                                <button
+                               {!questions.isAnswered &&(
+                                    <button
                                     className={`like-button ${questions.likeId ? 'liked' : ''}`}
                                     type="button"
                                     aria-label="Marcar como gostei"
@@ -126,6 +127,8 @@ export function Room() {
                                     </svg>
 
                                 </button>
+
+                               )}
                             </Question>
                         );
                     })}
